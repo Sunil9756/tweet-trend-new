@@ -1,0 +1,35 @@
+pipeline {
+    agent {
+        node {
+            label 'maven3'
+        }
+    }
+environment {
+    PATH = "/opt/apache-maven-3.9.5/bin:$PATH"
+}
+
+stages {
+        stage("build"){
+            steps {
+                 echo "----------- build started ----------"
+                sh 'mvn clean deploy -Dmaven.test.skip=true'
+                 echo "----------- build complted ----------"
+            }
+
+         stage("copy artifact"){
+             steps {
+                  echo "copy artifact on github docker folder"
+                    sh 'pwd'
+                    sh 'cp -r target/*.jar docker'
+                   }
+                
+           }
+
+         stage("build docker image"){
+             steps {
+                  script{
+                    def customimage=docker.build()        
+                         }
+                   }
+                
+           }
