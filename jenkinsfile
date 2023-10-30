@@ -15,7 +15,7 @@ stages {
                 sh 'mvn clean deploy -Dmaven.test.skip=true'
                  echo "----------- build complted ----------"
             }
-
+         }
          stage("copy artifact"){
              steps {
                   echo "copy artifact on github docker folder"
@@ -28,8 +28,11 @@ stages {
          stage("build docker image"){
              steps {
                   script{
-                    def customimage=docker.build()        
+                    def customimage=docker.build('Sunil9756/tweet-trend-new',"./docker")
+                    dockerwithRegistry('https://hub.docker.com','dockerhub') {
+                    customimage.push("${env.BUILD_NUMBER}")      
+                       }        
                          }
-                   }
-                
+                   }    
            }
+      }
